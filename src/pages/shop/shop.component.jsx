@@ -3,22 +3,24 @@ import CollectionsOverview from "../../components/collections-overview/collectio
 import { Route } from "react-router-dom";
 import CollectionPage from "../collection/collection.component";
 
-import { connect } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import { fetchCollectionsStartAsync } from "../../redux/shop/shop.actions";
 import { selectIsCollectionFetching,selectIsCollectionsLoaded } from "../../redux/shop/shop.selectors";
 
 import WithSpinner from "../../components/with-spinner/with-spinner.component";
 
-import { createStructuredSelector } from "reselect";
-
 const CollectionsOverviewWithSpinner = WithSpinner(CollectionsOverview);
 const CollectionPageWithSpinner = WithSpinner(CollectionPage);
 
-const ShopPage= ({match,isCollectionFetching,isCollectionsLoaded,fetchCollectionsStartAsync})=> {
+const ShopPage= ({match})=> {
+
+  const dispatch=useDispatch();
+  const isCollectionFetching = useSelector(selectIsCollectionFetching);
+  const isCollectionsLoaded = useSelector(selectIsCollectionsLoaded);
 
  useEffect(()=>{
-  fetchCollectionsStartAsync();
- },[fetchCollectionsStartAsync])
+  dispatch(fetchCollectionsStartAsync());
+ },[dispatch])
 
     return (
       <div className="shop-page">
@@ -46,13 +48,13 @@ const ShopPage= ({match,isCollectionFetching,isCollectionsLoaded,fetchCollection
   
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync()),
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync()),
+// });
 
-const mapStateToProps = createStructuredSelector({
-  isCollectionFetching: selectIsCollectionFetching,
-  isCollectionsLoaded: selectIsCollectionsLoaded
-});
+// const mapStateToProps = createStructuredSelector({
+//   isCollectionFetching: selectIsCollectionFetching,
+//   isCollectionsLoaded: selectIsCollectionsLoaded
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(ShopPage);
+export default ShopPage;

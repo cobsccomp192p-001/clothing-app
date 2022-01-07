@@ -8,13 +8,15 @@ import SigninAndSignupPage from "./pages/signin-and-signup/signin-and-signup.com
 import { auth, createUserProfileDocument } from "./firebase/firebase.utils";
 import CheckoutPage from "./pages/checkout/checkout.component";
 
-import { connect } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { setCurrentUser } from "./redux/user/user.actions";
 
-import { createStructuredSelector } from "reselect";
 import { selectCurrentUser } from "./redux/user/user.selectors";
 
-const App = ({ setCurrentUser, currentUser }) => {
+const App = () => {
+
+const currentUser=useSelector(selectCurrentUser);
+const dispatch=useDispatch();
 
   useEffect(() => {
 
@@ -23,13 +25,13 @@ const App = ({ setCurrentUser, currentUser }) => {
         const userRef = await createUserProfileDocument(userAuth);
 
         userRef.onSnapshot((snapshot) => {
-          setCurrentUser({
+          dispatch(setCurrentUser({
             id: snapshot.id,
             ...snapshot.data(),
-          });
+          }));
         });
       } else {
-        setCurrentUser(userAuth);
+        dispatch(setCurrentUser(userAuth));
       }
     });
 
@@ -39,7 +41,7 @@ const App = ({ setCurrentUser, currentUser }) => {
       unsubscribeFromAuth();
     };
 
-  }, []);
+  }, [dispatch]);
 
   return (
     <div>
@@ -60,12 +62,14 @@ const App = ({ setCurrentUser, currentUser }) => {
   );
 };
 
-const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser,
-});
+//***Used before hooks with connect HOC
 
-const mapDispatchToProps = (dispatch) => ({
-  setCurrentUser: (user) => dispatch(setCurrentUser(user)),
-});
+// const mapStateToProps = createStructuredSelector({
+//   currentUser: selectCurrentUser,
+// });
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+// const mapDispatchToProps = (dispatch) => ({
+//   setCurrentUser: (user) => dispatch(setCurrentUser(user)),
+// });
+
+export default App;
